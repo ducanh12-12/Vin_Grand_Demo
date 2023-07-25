@@ -8,7 +8,8 @@ import (
 
 	config "base-go/common/config"
 
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
+	echoSwagger "github.com/swaggo/echo-swagger"
 )
 
 func NewHttpServer(cnf *config.Config, engine http.Handler) *http.Server {
@@ -34,14 +35,37 @@ func NewHttpServer(cnf *config.Config, engine http.Handler) *http.Server {
 	}
 }
 
+// @title Grand-Demo-API
+// @description This api for demo app
+// @version 1.0
+// @host localhost:8001
+// @BasePath
 func EchoRouter(cnf *config.Config, app *application.App) http.Handler {
 	e := echo.New()
-
+	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			err := next(c)
+			if err != nil {
+				// Log lỗi
+				fmt.Println("Error:", err)
+			}
+			return err
+		}
+	})
 	// middlewares config goes here...
-
 	// subrouters/controllers mounting
 	catsController := controllers.NewCatsController(app.Cats)
 	catsController.Mount(e)
-
+	usersController := controllers.NewUsersController(app.Users)
+	usersController.Mount(e)
+	authController := controllers.NewAuthController(app.Auth)
+	authController.Mount(e)
+	blogsController := controllers.NewBlogsController(app.Blogs)
+	blogsController.Mount(e)
+	eventsController := controllers.NewEventsController(app.Events)
+	eventsController.Mount(e)
+	vouchersController := controllers.NewVouchersController(app.Vouchers)
+	vouchersController.Mount(e)
+	e.GET("/swagger/*", echoSwagger.WrapHandler)
 	return e
 }

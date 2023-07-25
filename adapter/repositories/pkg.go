@@ -5,7 +5,7 @@ import (
 	"base-go/common/logger"
 	"fmt"
 
-	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
@@ -16,10 +16,11 @@ func NewGormdb(cnf *config.Config) (db *gorm.DB) {
 	logger.Info("Connecting to database backend %s at %s@%h:%d/%s", dbCnf.DBbackend, dbCnf.Username, dbCnf.Host, dbCnf.Port, dbCnf.DBname)
 	connString := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local",
 		dbCnf.Username, dbCnf.Password, dbCnf.Host, dbCnf.Port, dbCnf.DBname)
+	fmt.Println(connString)
 	switch dbCnf.DBbackend {
-	case "mysql":
-		db, err := gorm.Open(mysql.New(mysql.Config{
-			DSN: connString,
+	case "postgres":
+		db, err := gorm.Open(postgres.New(postgres.Config{
+			DSN: "user=root password=root dbname=vin_demo port=5432 sslmode=disable host=localhost",
 		}), &gorm.Config{})
 		if err != nil {
 			logger.Error("Fatal: %s", err.Error())

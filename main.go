@@ -2,14 +2,27 @@ package main
 
 import (
 	"base-go/adapter/repositories"
+	blogs_repo "base-go/adapter/repositories/blogs-repo"
 	cats_repo "base-go/adapter/repositories/cats-repo"
+	events_repo "base-go/adapter/repositories/events-repo"
+	users_repo "base-go/adapter/repositories/users-repo"
+	vouchers_repo "base-go/adapter/repositories/vouchers-repo"
 	"base-go/application"
+	"base-go/application/auth"
+	"base-go/application/blogs"
 	"base-go/application/cats"
+	"base-go/application/events"
+	"base-go/application/users"
+	"base-go/application/vouchers"
 	"base-go/common/config"
 	"base-go/common/logger"
 	gw_http "base-go/gateway/http"
 	"base-go/migrations"
+	blogs_service "base-go/services/blogs"
 	cats_service "base-go/services/cats"
+	events_service "base-go/services/events"
+	users_service "base-go/services/users"
+	vouchers_service "base-go/services/vouchers"
 	"context"
 	"log"
 	"net/http"
@@ -17,8 +30,15 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+
+	_ "base-go/docs"
 )
 
+// @title Grand-Demo-API
+// @description This api for demo app
+// @version 1.0
+// @host localhost:8001
+// @BasePath
 func main() {
 	mainEcho()
 }
@@ -35,7 +55,20 @@ func mainEcho() {
 	catRepo := cats_repo.NewCatsRepo(gormdb)
 	catsService := cats_service.NewCatsService(catRepo)
 	catsInteractor := cats.NewCatsInteractor(catsService)
-	app := application.NewApp(catsInteractor)
+	userRepo := users_repo.NewUsersRepo(gormdb)
+	usersService := users_service.NewUserService(userRepo)
+	authInteractor := auth.NewAuthInteractor(usersService)
+	usersInteractor := users.NewUsersInteractor(usersService)
+	blogRepo := blogs_repo.NewBlogsRepo(gormdb)
+	blogsService := blogs_service.NewBlogService(blogRepo)
+	blogsInteractor := blogs.NewBlogsInteractor(blogsService)
+	eventRepo := events_repo.NewEventsRepo(gormdb)
+	eventsService := events_service.NewEventService(eventRepo)
+	eventsInteractor := events.NewEventsInteractor(eventsService)
+	voucherRepo := vouchers_repo.NewVouchersRepo(gormdb)
+	vouchersService := vouchers_service.NewVoucherService(voucherRepo)
+	vouchersInteractor := vouchers.NewVouchersInteractor(vouchersService)
+	app := application.NewApp(authInteractor, catsInteractor, usersInteractor, blogsInteractor, eventsInteractor, vouchersInteractor)
 
 	logger.Info("Constructing http server...")
 	router := gw_http.EchoRouter(cnf, app)

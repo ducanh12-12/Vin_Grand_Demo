@@ -5,7 +5,7 @@ import (
 	"base-go/common/logger"
 	"net/http"
 
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 )
 
 type CatsController struct {
@@ -15,14 +15,12 @@ type CatsController struct {
 func NewCatsController(catsInteractor cats.CatsInteractor) *CatsController {
 	return &CatsController{catsInteractor}
 }
-
 func (controller *CatsController) Mount(e *echo.Echo) {
 	g := e.Group("/cats")
 	g.GET("/ping", controller.Ping)
 	g.GET("/:id", controller.GetCat)
 	g.POST("", controller.AddCat)
 }
-
 func (controller *CatsController) Ping(c echo.Context) error {
 	c.JSON(200, "pong")
 	return nil
@@ -42,7 +40,6 @@ func (controller *CatsController) GetCat(c echo.Context) error {
 	c.JSON(http.StatusOK, cat)
 	return nil
 }
-
 func (controller *CatsController) AddCat(c echo.Context) error {
 	catIpt := cats.AddCatIpt{}
 	// should validate ipt here
