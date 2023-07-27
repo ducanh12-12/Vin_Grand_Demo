@@ -3,7 +3,7 @@ package model
 import "time"
 
 type Event struct {
-	Id          string    `gorm:"column:id;primaryKey;autoIncrement" json:"id"`
+	Id          int       `gorm:"column:id;primaryKey;autoIncrement" json:"id" validate:"required"`
 	Title       string    `gorm:"column:title" json:"title"`
 	Description string    `gorm:"column:description" json:"description"`
 	Content     string    `gorm:"column:content" json:"content"`

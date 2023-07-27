@@ -3,9 +3,11 @@ package controllers
 import (
 	"base-go/application/users"
 	"base-go/common/logger"
+	"base-go/gateway/http/middlewares"
 	"base-go/gateway/http/presenter"
 	"base-go/gateway/http/validator/user"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
@@ -21,8 +23,9 @@ func NewUsersController(usersInteractor users.UsersInteractor) *UsersController 
 }
 
 func (controller *UsersController) Mount(e *echo.Echo) {
-	g := e.Group("/users")
+	g := e.Group("/api/users", middlewares.MiddlewareJWT)
 	g.GET("/:id", controller.GetUser)
+	g.PUT("/add_point/:id", controller.AddPoint)
 	g.GET("", controller.GetUsers)
 	g.POST("", controller.Adduser)
 }
@@ -69,9 +72,9 @@ func Hash(password string) (string, error) {
 	return string(bytes), err
 }
 func (controller *UsersController) Adduser(c echo.Context) error {
-	password := c.FormValue("password")
+	pasworDefault := os.Getenv("DEFAULT_PASSWORD")
 	userIpt := users.AddUserIpt{}
-	PasswordHash, err := Hash(password)
+	PasswordHash, err := Hash(pasworDefault)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, err)
 		return nil
@@ -90,6 +93,29 @@ func (controller *UsersController) Adduser(c echo.Context) error {
 	}
 	logger.Info("Adduser input: %+v", c)
 	newuser, err := controller.usersInteractor.AddUser(c.Request().Context(), userIpt)
+	if err != nil {
+		c.JSON(http.StatusBadGateway, err)
+		return nil
+	}
+	user := presenter.User(newuser)
+	c.JSON(http.StatusOK, user)
+	return nil
+}
+func (controller *UsersController) AddPoint(c echo.Context) error {
+	id, _ := strconv.Atoi(c.Param("id"))
+	userIpt := users.AddPoint{}
+	err := c.Bind(&userIpt)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return nil
+	}
+	err = user.ValidatePoint(userIpt)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return nil
+	}
+	logger.Info("Add point user input: %+v", c)
+	newuser, err := controller.usersInteractor.AddPointUser(c.Request().Context(), userIpt, id)
 	if err != nil {
 		c.JSON(http.StatusBadGateway, err)
 		return nil

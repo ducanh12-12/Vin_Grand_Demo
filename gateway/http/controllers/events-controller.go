@@ -3,6 +3,7 @@ package controllers
 import (
 	"base-go/application/events"
 	"base-go/common/logger"
+	"base-go/gateway/http/middlewares"
 	"base-go/gateway/http/presenter"
 	"base-go/gateway/http/validator/event"
 	"net/http"
@@ -20,7 +21,7 @@ func NewEventsController(eventsInteractor events.EventsInteractor) *EventsContro
 }
 
 func (controller *EventsController) Mount(e *echo.Echo) {
-	g := e.Group("/events")
+	g := e.Group("/api/events", middlewares.MiddlewareJWT)
 	g.GET("/:id", controller.GetEvent)
 	g.GET("", controller.GetEvents)
 	g.POST("", controller.AddEvent)

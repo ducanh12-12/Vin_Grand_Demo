@@ -3,7 +3,7 @@ package model
 import "time"
 
 type Notification struct {
-	Id          string    `gorm:"column:id;primaryKey;autoIncrement" json:"id"`
+	Id          int       `gorm:"column:id;primaryKey;autoIncrement" json:"id" validate:"required"`
 	CreatetorId int       `gorm:"column:creator_id" json:"creator_id"`
 	Title       string    `gorm:"column:title" json:"title"`
 	Type        int       `gorm:"column:type" json:"type"`

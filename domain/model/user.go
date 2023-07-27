@@ -11,6 +11,7 @@ type User struct {
 	Avatar    string    `gorm:"column:avatar" json:"avatar"`
 	Password  string    `gorm:"column:password" json:"-" validate:"required"`
 	LastLogin string    `gorm:"column:last_login" json:"last_login"`
+	Point     int       `gorm:"column:point" json:"point"`
 	CreatedAt time.Time `gorm:"column:created_at" json:"created_at"`
 	UpdatedAt time.Time `gorm:"column:updated_at" json:"updated_at"`
 }

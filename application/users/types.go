@@ -11,6 +11,9 @@ type AddUserIpt struct {
 	Avatar   string `json:"avatar" `
 	Password string `json:"password"  validate:"required"`
 }
+type AddPoint struct {
+	Point int `json:"point"  validate:"required"`
+}
 
 // query
 

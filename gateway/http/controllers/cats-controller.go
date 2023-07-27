@@ -3,6 +3,7 @@ package controllers
 import (
 	"base-go/application/cats"
 	"base-go/common/logger"
+	"base-go/gateway/http/middlewares"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -16,6 +17,7 @@ func NewCatsController(catsInteractor cats.CatsInteractor) *CatsController {
 	return &CatsController{catsInteractor}
 }
 func (controller *CatsController) Mount(e *echo.Echo) {
+	e.Group("/api", middlewares.MiddlewareJWT)
 	g := e.Group("/cats")
 	g.GET("/ping", controller.Ping)
 	g.GET("/:id", controller.GetCat)

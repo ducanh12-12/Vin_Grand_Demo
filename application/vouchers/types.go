@@ -8,10 +8,10 @@ import (
 // command
 type AddVoucherIpt struct {
 	Title    string    `json:"title"  validate:"required"`
-	EventId  int       `json:"eventId"  validate:"required"`
+	EventId  int       `json:"eventId"`
 	Point    int       `json:"point"  validate:"required"`
 	Quantity int       `json:"quantity"  validate:"required"`
-	OutDate  time.Time `json:"outdate"  validate:"required"`
+	OutDate  time.Time `json:"outdate"`
 }
 
 // query

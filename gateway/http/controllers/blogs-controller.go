@@ -3,6 +3,7 @@ package controllers
 import (
 	"base-go/application/blogs"
 	"base-go/common/logger"
+	"base-go/gateway/http/middlewares"
 	"base-go/gateway/http/presenter"
 	"base-go/gateway/http/validator/blog"
 	"net/http"
@@ -20,7 +21,7 @@ func NewBlogsController(blogsInteractor blogs.BlogsInteractor) *BlogsController 
 }
 
 func (controller *BlogsController) Mount(e *echo.Echo) {
-	g := e.Group("/blogs")
+	g := e.Group("/api/blogs", middlewares.MiddlewareJWT)
 	g.GET("/:id", controller.GetBlog)
 	g.GET("", controller.GetBlogs)
 	g.POST("", controller.AddBlog)

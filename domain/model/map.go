@@ -3,7 +3,7 @@ package model
 import "time"
 
 type Map struct {
-	Id        string    `gorm:"column:id;primaryKey;autoIncrement" json:"id"`
+	Id        int       `gorm:"column:id;primaryKey;autoIncrement" json:"id" validate:"required"`
 	Latitude  float64   `gorm:"column:latitude" json:"latitude"`
 	Longitude float64   `gorm:"column:longitude" json:"longitude"`
 	Address   string    `gorm:"column:address" json:"address"`

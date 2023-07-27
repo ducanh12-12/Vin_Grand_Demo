@@ -3,7 +3,7 @@ package model
 import "time"
 
 type Voucher struct {
-	Id        string    `gorm:"column:id;primaryKey;autoIncrement" json:"id"`
+	Id        int       `gorm:"column:id;primaryKey;autoIncrement" json:"id" validate:"required"`
 	Title     string    `gorm:"column:title" json:"title"`
 	EventId   int       `gorm:"column:event_id" json:"event_id"`
 	Point     int       `gorm:"column:point" json:"point"`

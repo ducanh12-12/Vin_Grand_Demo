@@ -40,3 +40,21 @@ func (interactor *UsersInteractor) GetUserByUserName(ctx context.Context, userna
 func (interactor *UsersInteractor) GetUsers(ctx context.Context) (*[]GetUserResp, error) {
 	return interactor.userService.GetUsers(ctx)
 }
+func (interactor *UsersInteractor) AddPointUser(ctx context.Context, user AddPoint, id int) (*model.User, error) {
+	olduser, err := interactor.userService.Retrieve(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	now := time.Now()
+	point := model.User{
+		Id:        olduser.Id,
+		Point:     olduser.Point + user.Point,
+		UpdatedAt: now,
+	}
+	pointNew, err := interactor.userService.AddPointUser(ctx, point)
+	if err != nil {
+		logger.Error("Unable to add user, error: %s", err.Error())
+		return nil, err
+	}
+	return pointNew, nil
+}

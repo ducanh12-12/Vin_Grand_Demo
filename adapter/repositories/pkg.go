@@ -20,7 +20,7 @@ func NewGormdb(cnf *config.Config) (db *gorm.DB) {
 	switch dbCnf.DBbackend {
 	case "postgres":
 		db, err := gorm.Open(postgres.New(postgres.Config{
-			DSN: "user=postgres password=postgres dbname=vin_demo port=5432 sslmode=disable host=localhost",
+			DSN: "user=root password=root dbname=abc port=5432 sslmode=disable host=localhost",
 		}), &gorm.Config{})
 		if err != nil {
 			logger.Error("Fatal: %s", err.Error())

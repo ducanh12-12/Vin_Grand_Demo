@@ -20,6 +20,10 @@ func (r *usersRepo) CreateUser(ctx context.Context, user model.User) (*model.Use
 	err := r.db.Create(&user).Error
 	return &user, err
 }
+func (r *usersRepo) AddPointUser(ctx context.Context, user model.User) (*model.User, error) {
+	err := r.db.Where("id = ?", user.Id).Updates(user).First(&user).Error
+	return &user, err
+}
 
 func (r *usersRepo) Retrieve(ctx context.Context, id int) (*model.User, error) {
 	user := model.User{}

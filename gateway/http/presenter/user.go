@@ -11,5 +11,6 @@ func User(user *model.User) model.User {
 		UserName:  user.UserName,
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
+		Point:     user.Point,
 	}
 }

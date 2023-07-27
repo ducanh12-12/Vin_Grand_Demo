@@ -42,24 +42,14 @@ func NewHttpServer(cnf *config.Config, engine http.Handler) *http.Server {
 // @BasePath
 func EchoRouter(cnf *config.Config, app *application.App) http.Handler {
 	e := echo.New()
-	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
-		return func(c echo.Context) error {
-			err := next(c)
-			if err != nil {
-				// Log lỗi
-				fmt.Println("Error:", err)
-			}
-			return err
-		}
-	})
-	// middlewares config goes here...
-	// subrouters/controllers mounting
+	authController := controllers.NewAuthController(app.Auth)
+	authController.Mount(e)
+	// secretKey := os.Getenv("SECRET_JWT")
+	// e.Use(middleware.JWT([]byte(secretKey)))
 	catsController := controllers.NewCatsController(app.Cats)
 	catsController.Mount(e)
 	usersController := controllers.NewUsersController(app.Users)
 	usersController.Mount(e)
-	authController := controllers.NewAuthController(app.Auth)
-	authController.Mount(e)
 	blogsController := controllers.NewBlogsController(app.Blogs)
 	blogsController.Mount(e)
 	eventsController := controllers.NewEventsController(app.Events)

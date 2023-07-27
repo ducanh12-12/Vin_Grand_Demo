@@ -17,6 +17,9 @@ func NewUserService(userRepo requires.UserRepository) implFor.UsersService {
 func (svc *usersServiceImpl) CreateUser(ctx context.Context, user model.User) (*model.User, error) {
 	return svc.userRepo.CreateUser(ctx, user)
 }
+func (svc *usersServiceImpl) AddPointUser(ctx context.Context, user model.User) (*model.User, error) {
+	return svc.userRepo.AddPointUser(ctx, user)
+}
 
 func (svc *usersServiceImpl) GetUsers(ctx context.Context) (*[]model.User, error) {
 	return svc.userRepo.GetUsers(ctx)

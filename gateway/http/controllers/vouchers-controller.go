@@ -3,6 +3,7 @@ package controllers
 import (
 	"base-go/application/vouchers"
 	"base-go/common/logger"
+	"base-go/gateway/http/middlewares"
 	"base-go/gateway/http/presenter"
 	"base-go/gateway/http/validator/voucher"
 	"net/http"
@@ -20,7 +21,7 @@ func NewVouchersController(vouchersInteractor vouchers.VouchersInteractor) *Vouc
 }
 
 func (controller *VouchersController) Mount(e *echo.Echo) {
-	g := e.Group("/vouchers")
+	g := e.Group("/api/vouchers", middlewares.MiddlewareJWT)
 	g.GET("/:id", controller.GetVoucher)
 	g.GET("", controller.GetVouchers)
 	g.POST("", controller.AddVoucher)
@@ -62,7 +63,7 @@ func (controller *VouchersController) AddVoucher(c echo.Context) error {
 	}
 	err = voucher.ValidateVoucher(voucherIpt)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err)
+		c.JSON(http.StatusBadRequest, err.Error())
 		return nil
 	}
 	logger.Info("AddVoucher input: %+v", c)
