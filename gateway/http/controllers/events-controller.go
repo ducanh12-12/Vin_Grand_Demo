@@ -57,6 +57,16 @@ func (controller *EventsController) AddEvent(c echo.Context) error {
 	eventIpt := events.AddEventIpt{}
 	logger.Info("AddEvent input: %+v", eventIpt)
 	err := c.Bind(&eventIpt)
+	// if eventIpt.StartTime != "" {
+	// 	layout := "02/01/2006"
+	// 	t, err := time.Parse(layout, eventIpt.StartTime)
+	// 	if err != nil {
+	// 		fmt.Println("Failed to parse StartTime:", err)
+	// 	} else {
+	// 		eventIpt.StartTime := &t
+	// 	}
+	// }
+
 	if err != nil {
 		c.JSON(http.StatusBadRequest, err)
 		return nil

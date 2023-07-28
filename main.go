@@ -32,6 +32,8 @@ import (
 	"time"
 
 	_ "base-go/docs"
+
+	"github.com/joho/godotenv"
 )
 
 // @title Grand-Demo-API
@@ -46,7 +48,7 @@ func main() {
 func mainEcho() {
 	logger.Init()
 	cnf := config.Get()
-
+	err := godotenv.Load()
 	logger.Info("Initializing...")
 	gormdb := repositories.NewGormdb(cnf)
 	migrations.Migrate(gormdb)
@@ -103,7 +105,7 @@ func mainEcho() {
 
 	// Run the server
 	logger.Info("Starting http server at %s:%d", cnf.HttpConfig.Host, cnf.HttpConfig.Port)
-	err := server.ListenAndServe()
+	err = server.ListenAndServe()
 	if err != nil && err != http.ErrServerClosed {
 		log.Fatal(err)
 	}

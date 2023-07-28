@@ -81,9 +81,15 @@ func (controller *UsersController) Adduser(c echo.Context) error {
 	}
 	logger.Info("Adduser input: %+v", userIpt)
 	err = c.Bind(&userIpt)
+	userExit, err := controller.usersInteractor.GetUserByUserName(c.Request().Context(), userIpt.UserName)
+	if userExit.UserName != "" {
+		c.JSON(http.StatusBadRequest, "User exit")
+		return nil
+	}
+	err = nil
 	userIpt.Password = PasswordHash
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err)
+		c.JSON(http.StatusBadRequest, err.Error())
 		return nil
 	}
 	err = user.ValidateUser(userIpt)
@@ -117,7 +123,7 @@ func (controller *UsersController) AddPoint(c echo.Context) error {
 	logger.Info("Add point user input: %+v", c)
 	newuser, err := controller.usersInteractor.AddPointUser(c.Request().Context(), userIpt, id)
 	if err != nil {
-		c.JSON(http.StatusBadGateway, err)
+		c.JSON(http.StatusBadGateway, err.Error())
 		return nil
 	}
 	user := presenter.User(newuser)

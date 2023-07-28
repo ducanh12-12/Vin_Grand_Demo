@@ -6,6 +6,7 @@ import (
 
 func Voucher(voucher *model.Voucher) model.Voucher {
 	return model.Voucher{
+		Id:        voucher.Id,
 		Title:     voucher.Title,
 		EventId:   voucher.EventId,
 		Point:     voucher.Point,

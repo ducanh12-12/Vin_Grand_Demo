@@ -6,6 +6,7 @@ import (
 
 func Blog(blog *model.Blog) model.Blog {
 	return model.Blog{
+		Id:          blog.Id,
 		Title:       blog.Title,
 		Content:     blog.Content,
 		Description: blog.Description,

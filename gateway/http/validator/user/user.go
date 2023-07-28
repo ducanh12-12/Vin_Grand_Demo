@@ -2,19 +2,15 @@ package user
 
 import (
 	"base-go/application/users"
-	"strings"
+	"fmt"
+	"regexp"
 
 	"github.com/go-playground/validator"
 )
 
-type MultiError []error
-
-func (me MultiError) Error() string {
-	var messages []string
-	for _, err := range me {
-		messages = append(messages, err.Error())
-	}
-	return strings.Join(messages, "; ")
+func isValidUsername(username string) bool {
+	regex := regexp.MustCompile(`^[\p{L}\p{N}._-]+$`)
+	return regex.MatchString(username)
 }
 func ValidateUser(user users.AddUserIpt) error {
 
@@ -32,6 +28,9 @@ func ValidateUser(user users.AddUserIpt) error {
 
 		// }
 		return validationErrors
+	}
+	if !isValidUsername(user.UserName) {
+		return fmt.Errorf("Invalid username")
 	}
 	return nil
 }

@@ -30,7 +30,7 @@ func Hash(password string) (string, error) {
 	return string(bytes), err
 }
 
-func CheckPasswordHash(hashedPassword, password string) error {
+func CheckPasswordHash(hashedPassword string, password string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
 }
 func (interactor *AuthInteractor) Login(ctx context.Context, username string, password string) (string, error) {
