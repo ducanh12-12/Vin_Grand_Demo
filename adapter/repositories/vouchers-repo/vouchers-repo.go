@@ -28,6 +28,18 @@ func (r *vouchersRepo) Retrieve(ctx context.Context, id int) (*model.Voucher, er
 }
 func (r *vouchersRepo) GetVouchers(ctx context.Context) (*[]model.Voucher, error) {
 	var voucher []model.Voucher
-	err := r.db.Find(&voucher).Error
+	err := r.db.Order("id asc").Find(&voucher).Error
 	return &voucher, err
+}
+func (r *vouchersRepo) Update(ctx context.Context, voucher model.Voucher, id int) (*model.Voucher, error) {
+	eventOld := model.Voucher{}
+	if err := r.db.Where("id = ?", id).First(&eventOld).Error; err != nil {
+		return &eventOld, err
+	}
+	err := r.db.Model(&eventOld).Updates(&voucher).Error
+	return &eventOld, err
+}
+func (r *vouchersRepo) Delete(ctx context.Context, id int) (string, error) {
+	err := r.db.Delete(model.Voucher{}, id).Error
+	return "okla", err
 }

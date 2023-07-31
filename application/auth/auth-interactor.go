@@ -2,6 +2,7 @@ package auth
 
 import (
 	"base-go/application/requires"
+	"base-go/domain/model"
 	"context"
 	"os"
 	"time"
@@ -33,13 +34,23 @@ func Hash(password string) (string, error) {
 func CheckPasswordHash(hashedPassword string, password string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
 }
-func (interactor *AuthInteractor) Login(ctx context.Context, username string, password string) (string, error) {
-	user, err := interactor.userService.GetUserByUserName(ctx, username)
-	if err != nil {
-		return "", err
+func (interactor *AuthInteractor) Login(ctx context.Context, username string, phone_number string, password string) (string, error) {
+	user := &model.User{}
+	var err error
+	if username != "" {
+		user, err = interactor.userService.GetUserByUserName(ctx, username)
+		if err != nil {
+			return "", err
+		}
+	}
+	if phone_number != "" {
+		user, err = interactor.userService.GetUserByPhoneNumber(ctx, phone_number)
+		if err != nil {
+			return "", err
+		}
 	}
 	hashedPassword := user.Password
-	err = CheckPasswordHash(hashedPassword, password)
+	err = CheckPasswordHash(*hashedPassword, password)
 
 	if err != nil {
 		return "", err

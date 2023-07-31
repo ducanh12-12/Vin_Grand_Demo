@@ -22,3 +22,19 @@ func ValidateBlog(blog blogs.AddBlogIpt) error {
 	}
 	return nil
 }
+func ValidateUpdateBlog(blog blogs.UpdateBlogIpt) error {
+	type Err struct {
+		name string
+	}
+	validate := validator.New()
+
+	err := validate.Struct(blog)
+	if err != nil {
+		validationErrors := err.(validator.ValidationErrors)
+		// for _, fieldErr := range validationErrors {
+		// 	fieldErr.Value() = fmt.Sprintf(fieldErr)
+		// }
+		return validationErrors
+	}
+	return nil
+}

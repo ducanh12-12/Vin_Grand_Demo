@@ -28,6 +28,8 @@ func (controller *UsersController) Mount(e *echo.Echo) {
 	g.PUT("/add_point/:id", controller.AddPoint)
 	g.GET("", controller.GetUsers)
 	g.POST("", controller.Adduser)
+	g.PUT("/:id", controller.Update)
+	g.DELETE("/:id", controller.Delete)
 }
 
 // @Summary Create User
@@ -45,7 +47,7 @@ func (controller *UsersController) GetUser(c echo.Context) error {
 	user, err := controller.usersInteractor.GetUser(c.Request().Context(), id)
 	if err != nil {
 		// should delegate to echo's error handler instead, but for now it hasn't been setup yet
-		c.JSON(http.StatusBadGateway, err)
+		c.JSON(http.StatusBadGateway, err.Error())
 		return nil
 	}
 	// might need a presenter layer and a response model
@@ -57,7 +59,7 @@ func (controller *UsersController) GetUsers(c echo.Context) error {
 	user, err := controller.usersInteractor.GetUsers(c.Request().Context())
 	if err != nil {
 		// should delegate to echo's error handler instead, but for now it hasn't been setup yet
-		c.JSON(http.StatusBadGateway, err)
+		c.JSON(http.StatusBadGateway, err.Error())
 		return nil
 	}
 	// might need a presenter layer and a response model
@@ -76,7 +78,7 @@ func (controller *UsersController) Adduser(c echo.Context) error {
 	userIpt := users.AddUserIpt{}
 	PasswordHash, err := Hash(pasworDefault)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err)
+		c.JSON(http.StatusBadRequest, err.Error())
 		return nil
 	}
 	logger.Info("Adduser input: %+v", userIpt)
@@ -87,7 +89,7 @@ func (controller *UsersController) Adduser(c echo.Context) error {
 		return nil
 	}
 	err = nil
-	userIpt.Password = PasswordHash
+	userIpt.Password = convertToPointer(PasswordHash)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
 		return nil
@@ -100,7 +102,7 @@ func (controller *UsersController) Adduser(c echo.Context) error {
 	logger.Info("Adduser input: %+v", c)
 	newuser, err := controller.usersInteractor.AddUser(c.Request().Context(), userIpt)
 	if err != nil {
-		c.JSON(http.StatusBadGateway, err)
+		c.JSON(http.StatusBadGateway, err.Error())
 		return nil
 	}
 	user := presenter.User(newuser)
@@ -127,6 +129,44 @@ func (controller *UsersController) AddPoint(c echo.Context) error {
 		return nil
 	}
 	user := presenter.User(newuser)
+	c.JSON(http.StatusOK, user)
+	return nil
+}
+func (controller *UsersController) Update(c echo.Context) error {
+	id, _ := strconv.Atoi(c.Param("id"))
+	eventIpt := users.UpdateUserIpt{}
+	logger.Info("Update User input: %+v", eventIpt)
+	err := c.Bind(&eventIpt)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return nil
+	}
+	err = user.ValidateUpdateUser(eventIpt)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return nil
+	}
+	logger.Info("Add User input: %+v", c)
+	newblog, err := controller.usersInteractor.Update(c.Request().Context(), eventIpt, id)
+	if err != nil {
+		c.JSON(http.StatusBadGateway, err.Error())
+		return nil
+	}
+	blog := presenter.User(newblog)
+	c.JSON(http.StatusOK, blog)
+	return nil
+}
+func (controller *UsersController) Delete(c echo.Context) error {
+	id, _ := strconv.Atoi(c.Param("id"))
+	// should validate ipt here
+	logger.Info("Delete input: id=%d", id)
+	user, err := controller.usersInteractor.Delete(c.Request().Context(), id)
+	if err != nil {
+		// should delegate to echo's error handler instead, but for now it hasn't been setup yet
+		c.JSON(http.StatusBadGateway, err.Error())
+		return nil
+	}
+	// might need a presenter layer and a response model
 	c.JSON(http.StatusOK, user)
 	return nil
 }

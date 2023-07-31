@@ -24,7 +24,14 @@ func NewAuthController(authInteractor auth.AuthInteractor) *AuthController {
 func (controller *AuthController) Login(c echo.Context) error {
 	username := c.FormValue("username")
 	password := c.FormValue("password")
-	token, err := controller.authInteractor.Login(c.Request().Context(), username, password)
+	phone_number := c.FormValue("phone_number")
+	var token string
+	var err error
+	if phone_number == "" {
+		token, err = controller.authInteractor.Login(c.Request().Context(), username, "", password)
+	} else {
+		token, err = controller.authInteractor.Login(c.Request().Context(), "", phone_number, password)
+	}
 	logger.Info("Login")
 	if err != nil {
 		// should delegate to echo's error handler instead, but for now it hasn't been setup yet

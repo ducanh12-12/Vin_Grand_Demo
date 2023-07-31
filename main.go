@@ -5,6 +5,7 @@ import (
 	blogs_repo "base-go/adapter/repositories/blogs-repo"
 	cats_repo "base-go/adapter/repositories/cats-repo"
 	events_repo "base-go/adapter/repositories/events-repo"
+	invoices_repo "base-go/adapter/repositories/invoices-repo"
 	users_repo "base-go/adapter/repositories/users-repo"
 	vouchers_repo "base-go/adapter/repositories/vouchers-repo"
 	"base-go/application"
@@ -12,6 +13,7 @@ import (
 	"base-go/application/blogs"
 	"base-go/application/cats"
 	"base-go/application/events"
+	"base-go/application/invoices"
 	"base-go/application/users"
 	"base-go/application/vouchers"
 	"base-go/common/config"
@@ -21,6 +23,7 @@ import (
 	blogs_service "base-go/services/blogs"
 	cats_service "base-go/services/cats"
 	events_service "base-go/services/events"
+	invoices_service "base-go/services/invoices"
 	users_service "base-go/services/users"
 	vouchers_service "base-go/services/vouchers"
 	"context"
@@ -57,10 +60,6 @@ func mainEcho() {
 	catRepo := cats_repo.NewCatsRepo(gormdb)
 	catsService := cats_service.NewCatsService(catRepo)
 	catsInteractor := cats.NewCatsInteractor(catsService)
-	userRepo := users_repo.NewUsersRepo(gormdb)
-	usersService := users_service.NewUserService(userRepo)
-	authInteractor := auth.NewAuthInteractor(usersService)
-	usersInteractor := users.NewUsersInteractor(usersService)
 	blogRepo := blogs_repo.NewBlogsRepo(gormdb)
 	blogsService := blogs_service.NewBlogService(blogRepo)
 	blogsInteractor := blogs.NewBlogsInteractor(blogsService)
@@ -70,7 +69,14 @@ func mainEcho() {
 	voucherRepo := vouchers_repo.NewVouchersRepo(gormdb)
 	vouchersService := vouchers_service.NewVoucherService(voucherRepo)
 	vouchersInteractor := vouchers.NewVouchersInteractor(vouchersService)
-	app := application.NewApp(authInteractor, catsInteractor, usersInteractor, blogsInteractor, eventsInteractor, vouchersInteractor)
+	invoiceRepo := invoices_repo.NewInvoicesRepo(gormdb)
+	invoicesService := invoices_service.NewInvoiceService(invoiceRepo)
+	invoicesInteractor := invoices.NewInvoicesInteractor(invoicesService)
+	userRepo := users_repo.NewUsersRepo(gormdb)
+	usersService := users_service.NewUserService(userRepo)
+	authInteractor := auth.NewAuthInteractor(usersService)
+	usersInteractor := users.NewUsersInteractor(usersService, invoicesService)
+	app := application.NewApp(authInteractor, catsInteractor, usersInteractor, blogsInteractor, eventsInteractor, vouchersInteractor, invoicesInteractor)
 
 	logger.Info("Constructing http server...")
 	router := gw_http.EchoRouter(cnf, app)

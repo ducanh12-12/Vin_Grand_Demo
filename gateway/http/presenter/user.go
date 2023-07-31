@@ -6,11 +6,12 @@ import (
 
 func User(user *model.User) model.User {
 	return model.User{
-		Id:        user.Id,
-		FullName:  user.FullName,
-		UserName:  user.UserName,
-		CreatedAt: user.CreatedAt,
-		UpdatedAt: user.UpdatedAt,
-		Point:     user.Point,
+		Id:          user.Id,
+		FullName:    user.FullName,
+		UserName:    user.UserName,
+		PhoneNumber: user.PhoneNumber,
+		CreatedAt:   user.CreatedAt,
+		UpdatedAt:   user.UpdatedAt,
+		Point:       user.Point,
 	}
 }

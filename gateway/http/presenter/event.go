@@ -11,6 +11,9 @@ func Event(event *model.Event) model.Event {
 		Content:     event.Content,
 		Description: event.Description,
 		Avatar:      event.Avatar,
+		StartTime:   event.StartTime,
+		EndTime:     event.EndTime,
+		Status:      event.Status,
 		CreatedAt:   event.CreatedAt,
 		UpdatedAt:   event.UpdatedAt,
 	}

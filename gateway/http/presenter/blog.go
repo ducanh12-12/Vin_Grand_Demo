@@ -11,6 +11,7 @@ func Blog(blog *model.Blog) model.Blog {
 		Content:     blog.Content,
 		Description: blog.Description,
 		Avatar:      blog.Avatar,
+		Status:      blog.Status,
 		CreatedAt:   blog.CreatedAt,
 		UpdatedAt:   blog.UpdatedAt,
 	}

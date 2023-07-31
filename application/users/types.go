@@ -6,13 +6,20 @@ import (
 
 // command
 type AddUserIpt struct {
-	FullName string `json:"fullname"  validate:"required"`
-	UserName string `json:"username"  validate:"required"`
-	Avatar   string `json:"avatar" `
-	Password string `json:"password" `
+	FullName    *string `json:"fullname"  validate:"required"`
+	UserName    string  `json:"username"  validate:"required"`
+	PhoneNumber *string `json:"phone_number"`
+	Avatar      *string `json:"avatar" `
+	Password    *string `json:"password" `
+}
+type UpdateUserIpt struct {
+	FullName    *string `json:"fullname"`
+	PhoneNumber *string `json:"phone_number"`
+	Avatar      *string `json:"avatar" `
+	Password    *string `json:"password" `
 }
 type AddPoint struct {
-	Point int `json:"point"  validate:"required"`
+	InvoiceId int `json:"invoice_id" validate:"required"`
 }
 
 // query

@@ -32,8 +32,28 @@ func (interactor *VouchersInteractor) CreateVoucher(ctx context.Context, voucher
 	}
 	return voucherNew, nil
 }
+func (interactor *VouchersInteractor) Update(ctx context.Context, voucher UpdateVoucherIpt, id int) (*model.Voucher, error) {
+	now := time.Now()
+	newVoucher := model.Voucher{
+		Title:     voucher.Title,
+		EventId:   voucher.EventId,
+		Point:     voucher.Point,
+		Quantity:  voucher.Quantity,
+		OutDate:   voucher.OutDate,
+		UpdatedAt: now,
+	}
+	voucherNew, err := interactor.voucherService.Update(ctx, newVoucher, id)
+	if err != nil {
+		logger.Error("Unable to add voucher, error: %s", err.Error())
+		return nil, err
+	}
+	return voucherNew, nil
+}
 func (interactor *VouchersInteractor) GetVoucher(ctx context.Context, id int) (*GetVoucherResp, error) {
 	return interactor.voucherService.Retrieve(ctx, id)
+}
+func (interactor *VouchersInteractor) Delete(ctx context.Context, id int) (string, error) {
+	return interactor.voucherService.Delete(ctx, id)
 }
 func (interactor *VouchersInteractor) GetVouchers(ctx context.Context) (*[]GetVoucherResp, error) {
 	return interactor.voucherService.GetVouchers(ctx)

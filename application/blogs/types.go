@@ -10,6 +10,14 @@ type AddBlogIpt struct {
 	Content     string `json:"content"  validate:"required"`
 	Description string `json:"description"`
 	Avatar      string `json:"avatar" `
+	Status      bool   `json:"status"`
+}
+type UpdateBlogIpt struct {
+	Title       string `json:"title"`
+	Content     string `json:"content"`
+	Description string `json:"description"`
+	Avatar      string `json:"avatar" `
+	Status      bool   `json:"status"`
 }
 
 // query

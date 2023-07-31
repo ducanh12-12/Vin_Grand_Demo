@@ -56,6 +56,8 @@ func EchoRouter(cnf *config.Config, app *application.App) http.Handler {
 	eventsController.Mount(e)
 	vouchersController := controllers.NewVouchersController(app.Vouchers)
 	vouchersController.Mount(e)
+	invoicesController := controllers.NewInvoicesController(app.Invoices)
+	invoicesController.Mount(e)
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 	return e
 }
