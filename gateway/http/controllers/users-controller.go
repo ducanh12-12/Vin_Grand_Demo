@@ -83,9 +83,14 @@ func (controller *UsersController) Adduser(c echo.Context) error {
 	}
 	logger.Info("Adduser input: %+v", userIpt)
 	err = c.Bind(&userIpt)
-	userExit, err := controller.usersInteractor.GetUserByUserName(c.Request().Context(), userIpt.UserName)
+	userExit, _ := controller.usersInteractor.GetUserByUserName(c.Request().Context(), userIpt.UserName)
 	if userExit.UserName != "" {
 		c.JSON(http.StatusBadRequest, "User exit")
+		return nil
+	}
+	userExitPhonenumber, _ := controller.usersInteractor.GetUserByPhoneNumber(c.Request().Context(), *userIpt.PhoneNumber)
+	if userExitPhonenumber.PhoneNumber != nil && *userExitPhonenumber.PhoneNumber != "" {
+		c.JSON(http.StatusBadRequest, "PhoneNumber exit")
 		return nil
 	}
 	err = nil

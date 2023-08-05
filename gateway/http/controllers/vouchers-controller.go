@@ -59,6 +59,12 @@ func (controller *VouchersController) AddVoucher(c echo.Context) error {
 	voucherIpt := vouchers.AddVoucherIpt{}
 	logger.Info("AddVoucher input: %+v", voucherIpt)
 	err := c.Bind(&voucherIpt)
+	voucherExit, err := controller.vouchersInteractor.GetVoucherByTitle(c.Request().Context(), voucherIpt.Title)
+	if voucherExit.Title != "" {
+		c.JSON(http.StatusBadRequest, "Voucher exit")
+		return nil
+	}
+	err = nil
 	if err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
 		return nil

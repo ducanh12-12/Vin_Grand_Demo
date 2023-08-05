@@ -24,6 +24,9 @@ func (svc *vouchersServiceImpl) Update(ctx context.Context, voucher model.Vouche
 func (svc *vouchersServiceImpl) GetVouchers(ctx context.Context) (*[]model.Voucher, error) {
 	return svc.voucherRepo.GetVouchers(ctx)
 }
+func (svc *vouchersServiceImpl) GetVoucherByTitle(ctx context.Context, title string) (*model.Voucher, error) {
+	return svc.voucherRepo.GetVoucherByTitle(ctx, title)
+}
 func (svc *vouchersServiceImpl) Retrieve(ctx context.Context, id int) (*model.Voucher, error) {
 	return svc.voucherRepo.Retrieve(ctx, id)
 }

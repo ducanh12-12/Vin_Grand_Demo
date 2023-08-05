@@ -26,6 +26,9 @@ func (r *invoicesRepo) Update(ctx context.Context, id int, invoice model.Invoice
 		return &eventOld, err
 	}
 	eventCopy := invoice
+	if eventOld.Status != eventCopy.Status {
+		r.db.Model(&eventOld).Updates(map[string]interface{}{"status": eventCopy.Status})
+	}
 	err := r.db.Model(&eventOld).Updates(&eventCopy).Error
 	return &eventOld, err
 }
@@ -37,7 +40,7 @@ func (r *invoicesRepo) Retrieve(ctx context.Context, id int) (*model.Invoice, er
 }
 func (r *invoicesRepo) List(ctx context.Context) (*[]model.Invoice, error) {
 	var invoice []model.Invoice
-	err := r.db.Find(&invoice).Error
+	err := r.db.Order("id asc").Find(&invoice).Error
 	return &invoice, err
 }
 func (r *invoicesRepo) Delete(ctx context.Context, id int) (string, error) {

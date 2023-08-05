@@ -4,6 +4,7 @@ import (
 	"base-go/application/requires"
 	"base-go/domain/model"
 	"context"
+	"fmt"
 	"os"
 	"time"
 
@@ -40,20 +41,20 @@ func (interactor *AuthInteractor) Login(ctx context.Context, username string, ph
 	if username != "" {
 		user, err = interactor.userService.GetUserByUserName(ctx, username)
 		if err != nil {
-			return "", err
+			return "", fmt.Errorf("Incorrect username or password")
 		}
 	}
 	if phone_number != "" {
 		user, err = interactor.userService.GetUserByPhoneNumber(ctx, phone_number)
 		if err != nil {
-			return "", err
+			return "", fmt.Errorf("Incorrect phone number or password")
 		}
 	}
 	hashedPassword := user.Password
 	err = CheckPasswordHash(*hashedPassword, password)
 
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("Incorrect password")
 	}
 	token, errCreate := Create(username)
 	if errCreate != nil {

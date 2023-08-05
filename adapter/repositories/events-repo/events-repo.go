@@ -36,8 +36,11 @@ func (r *eventsRepo) Update(ctx context.Context, event model.Event, id int) (*mo
 	if err := r.db.Where("id = ?", id).First(&eventOld).Error; err != nil {
 		return &eventOld, err
 	}
-	eventCopy := event
-	err := r.db.Model(&eventOld).Updates(&eventCopy).Error
+	if eventOld.Status != event.Status {
+		r.db.Model(&eventOld).Updates(map[string]interface{}{"status": event.Status})
+	}
+	err := r.db.Model(&eventOld).Updates(&event).Error
+	event.Id = id
 	return &eventOld, err
 }
 func (r *eventsRepo) Delete(ctx context.Context, id int) (string, error) {

@@ -26,6 +26,11 @@ func (r *vouchersRepo) Retrieve(ctx context.Context, id int) (*model.Voucher, er
 	err := r.db.Where("id = ?", id).First(&voucher).Error
 	return &voucher, err
 }
+func (r *vouchersRepo) GetVoucherByTitle(ctx context.Context, title string) (*model.Voucher, error) {
+	voucher := model.Voucher{}
+	err := r.db.Where("title = ?", title).First(&voucher).Error
+	return &voucher, err
+}
 func (r *vouchersRepo) GetVouchers(ctx context.Context) (*[]model.Voucher, error) {
 	var voucher []model.Voucher
 	err := r.db.Order("id asc").Find(&voucher).Error
@@ -36,6 +41,7 @@ func (r *vouchersRepo) Update(ctx context.Context, voucher model.Voucher, id int
 	if err := r.db.Where("id = ?", id).First(&eventOld).Error; err != nil {
 		return &eventOld, err
 	}
+
 	err := r.db.Model(&eventOld).Updates(&voucher).Error
 	return &eventOld, err
 }
